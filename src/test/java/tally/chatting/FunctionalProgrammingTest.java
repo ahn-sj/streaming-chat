@@ -2,6 +2,7 @@ package tally.chatting;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,26 @@ import java.util.stream.IntStream;
 
 @SpringBootTest
 public class FunctionalProgrammingTest {
+
+    @Test
+    public void produceOneToNineReactive() {
+        Flux<Integer> intFlux = Flux.create(sink -> {
+            for (int i = 1; i <= 9; i++) {
+                sink.next(i);
+            }
+            sink.complete();
+        });
+        intFlux.subscribe(data -> System.out.println("Received: " + data));
+        System.out.println("======= Netty Event Loop =======");
+    }
+
+    @Test
+    public void produceOneToNineFluxOperator() {
+        Flux.fromIterable(IntStream.rangeClosed(1, 9). boxed().toList())
+                .map(data -> data * 4)
+                .filter(data -> data % 4 == 0)
+                .subscribe(data -> System.out.println("Received: " + data));
+    }
 
     @Test
     public void produceOneToNine() {
