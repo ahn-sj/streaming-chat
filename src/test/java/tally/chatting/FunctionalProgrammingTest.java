@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 @SpringBootTest
 public class FunctionalProgrammingTest {
@@ -21,6 +22,15 @@ public class FunctionalProgrammingTest {
         sink = map(sink, data -> data * 4);
         sink = filter(sink, data -> data % 4 == 0);
         forEach(sink, System.out::println);
+    }
+
+    @Test
+    public void produceOneToNineStream() {
+        IntStream.rangeClosed(1, 9)
+            .boxed()
+            .map(data -> data * 4)
+            .filter(data -> data % 4 == 0)
+            .forEach(System.out::println);
     }
 
     private void forEach(final List<Integer> sink, Consumer<Integer> consumer) {
