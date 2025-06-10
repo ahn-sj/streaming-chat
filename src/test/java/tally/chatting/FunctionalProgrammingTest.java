@@ -5,6 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @SpringBootTest
 public class FunctionalProgrammingTest {
@@ -16,21 +18,21 @@ public class FunctionalProgrammingTest {
             sink.add(i);
         }
 
-        sink = map(sink);
-        sink = filter(sink);
-        forEach(sink);
+        sink = map(sink, data -> data * 4);
+        sink = filter(sink, data -> data % 4 == 0);
+        forEach(sink, System.out::println);
     }
 
-    private void forEach(final List<Integer> sink) {
+    private void forEach(final List<Integer> sink, Consumer<Integer> consumer) {
         for (int i = 0; i < sink.size(); i++) {
-            System.out.println(sink.get(i));
+            consumer.accept(sink.get(i));
         }
     }
 
-    private List<Integer> filter(List<Integer> sink) {
+    private List<Integer> filter(List<Integer> sink, Function<Integer, Boolean> predicate) {
         List<Integer> newSink2 = new ArrayList<>();
         for (int i = 0; i <= 8; i++) {
-            if( sink.get(i) % 4 == 0) {
+            if (predicate.apply(sink.get(i))) {
                 newSink2.add(sink.get(i));
             }
         }
@@ -38,10 +40,10 @@ public class FunctionalProgrammingTest {
         return sink;
     }
 
-    private List<Integer> map(List<Integer> sink) {
+    private List<Integer> map(List<Integer> sink, Function<Integer, Integer> mapper) {
         List<Integer> newSink1 = new ArrayList<>();
         for (int i = 0; i <= 8; i++) {
-            newSink1.add(sink.get(i) * 2);
+            newSink1.add(mapper.apply(sink.get(i)));
         }
         sink = newSink1;
         return sink;
