@@ -1,4 +1,4 @@
-package tally.chatting.controller;
+package tally.chatting.controller.hello;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
