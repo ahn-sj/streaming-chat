@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tally.chatting.model.llmclient.LlmChatResponseDto;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,4 +12,8 @@ import lombok.Setter;
 @Setter
 public class UserChatResponseDto {
     private String response;
+
+    public UserChatResponseDto(final LlmChatResponseDto chatCompletion) {
+        this.response = chatCompletion.getLlmResponse();
+    }
 }

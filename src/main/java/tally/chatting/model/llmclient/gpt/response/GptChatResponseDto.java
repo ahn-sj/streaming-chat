@@ -20,4 +20,8 @@ import java.util.List;
 @Setter
 public class GptChatResponseDto {
     private List<GptChoice> choices;
+
+    public GptChoice getFirstChoice() {
+        return choices.stream().findFirst().orElseThrow();
+    }
 }
