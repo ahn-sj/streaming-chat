@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +33,11 @@ public class HelloNettyController {
      */
     @GetMapping("/onenine/flux")
     public Flux<Integer> produceOneToNineReactive() {
-        return Flux.create(sink -> {
+        return Flux.<Integer>create(sink -> {
             for (int i = 1; i <= 9; i++) {
                 try {
+                    // 2025-06-13T15:01:13.386+09:00  INFO 9007 --- [chatting] [oundedElastic-1] t.c.controller.HelloNettyController      : [Thread][boundedElastic-1]
+                    log.info("[Thread][{}]", Thread.currentThread().getName());
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -42,6 +45,6 @@ public class HelloNettyController {
                 sink.next(i);
             }
             sink.complete();
-        });
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 }
