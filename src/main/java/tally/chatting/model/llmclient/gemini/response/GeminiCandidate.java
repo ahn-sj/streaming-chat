@@ -11,4 +11,5 @@ import lombok.Setter;
 @Setter
 public class GeminiCandidate {
     private GeminiContent content;
+    private String finishReason;
 }
