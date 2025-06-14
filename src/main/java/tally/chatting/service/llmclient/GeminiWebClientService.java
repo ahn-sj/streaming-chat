@@ -9,7 +9,8 @@ import reactor.core.publisher.Mono;
 import tally.chatting.model.llmclient.LlmChatRequestDto;
 import tally.chatting.model.llmclient.LlmChatResponseDto;
 import tally.chatting.model.llmclient.LlmType;
-import tally.chatting.model.llmclient.gpt.response.GptChatResponseDto;
+import tally.chatting.model.llmclient.gemini.request.GeminiChatRequestDto;
+import tally.chatting.model.llmclient.gemini.response.GeminiChatResponseDto;
 
 @Slf4j
 @Service
@@ -22,10 +23,11 @@ public class GeminiWebClientService implements LlmWebClientService {
 
     @Override
     public Mono<LlmChatResponseDto> getChatCompletion(final LlmChatRequestDto llmChatRequestDto) {
+        final GeminiChatRequestDto geminiChatRequestDto = new GeminiChatRequestDto(llmChatRequestDto);
+
         return webClient.post()
                 .uri("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key= + " + geminiApiKey)
-                .header("Authorization", "Bearer " + gptApiKey)
-                .bodyValue(gptChatRequestDto)
+                .bodyValue(geminiChatRequestDto)
                 .retrieve()
                 .onStatus(
                         status -> status.is4xxClientError(),
@@ -36,7 +38,7 @@ public class GeminiWebClientService implements LlmWebClientService {
                             });
                         }
                 )
-                .bodyToMono(GptChatResponseDto.class)
+                .bodyToMono(GeminiChatResponseDto.class)
                 .map(LlmChatResponseDto::new);
     }
 

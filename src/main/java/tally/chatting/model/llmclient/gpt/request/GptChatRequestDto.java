@@ -46,7 +46,6 @@ public class GptChatRequestDto {
         final boolean isPresent = Optional.ofNullable(llmChatRequestDto.getUseJson())
                 .filter(useJson -> useJson)
                 .isPresent();
-
         if (isPresent) {
             response_format = new GptResponseFormat("json_object");
         }
