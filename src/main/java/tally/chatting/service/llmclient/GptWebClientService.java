@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tally.chatting.model.llmclient.LlmChatRequestDto;
 import tally.chatting.model.llmclient.LlmChatResponseDto;
 import tally.chatting.model.llmclient.LlmType;
 import tally.chatting.model.llmclient.gpt.request.GptChatRequestDto;
 import tally.chatting.model.llmclient.gpt.response.GptChatResponseDto;
+
+import java.util.Optional;
 
 import static tally.chatting.util.TodoUtils.TODO;
 
@@ -64,6 +67,30 @@ public class GptWebClientService implements LlmWebClientService {
                 )
                 .bodyToMono(GptChatResponseDto.class)
                 .map(LlmChatResponseDto::new);
+    }
+
+    @Override
+    public Flux<LlmChatResponseDto> getChatCompletionStream(final LlmChatRequestDto requestDto) {
+        final GptChatRequestDto gptChatRequestDto = new GptChatRequestDto(requestDto);
+        gptChatRequestDto.setStream(true);
+
+        return webClient.post()
+                .uri("https://api.openai.com/v1/chat/completions")
+                .header("Authorization", "Bearer " + gptApiKey)
+                .bodyValue(gptChatRequestDto)
+                .retrieve()
+                .onStatus(
+                        status -> status.is4xxClientError(),
+                        clientResponse -> {
+                            return clientResponse.bodyToMono(String.class).flatMap(body -> {
+                                log.error("Error Response from GPT API: {}", body);
+                                return Mono.error(new RuntimeException("API request failed" + body));
+                            });
+                        }
+                )
+                .bodyToFlux(GptChatResponseDto.class)
+                .takeWhile(chunk -> Optional.ofNullable(chunk.getFirstChoice().getFinish_reason()).isEmpty())
+                .map(LlmChatResponseDto::getLlmChatResponseDtoFromStream);
     }
 
     @Override

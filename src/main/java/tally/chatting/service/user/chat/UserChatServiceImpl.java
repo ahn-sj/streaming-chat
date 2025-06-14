@@ -3,6 +3,7 @@ package tally.chatting.service.user.chat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tally.chatting.model.llmclient.LlmChatRequestDto;
 import tally.chatting.model.llmclient.LlmChatResponseDto;
@@ -26,6 +27,17 @@ public class UserChatServiceImpl implements UserChatService {
             final LlmChatRequestDto llmChatRequestDto = new LlmChatRequestDto(userChatRequestDto, "Plan: 요청에 적절히 응답하기");
             final LlmWebClientService llmWebClientService = llmWebClientServiceMap.get(userChatRequestDto.getLlmModel().getLlmType());
             final Mono<LlmChatResponseDto> chatCompletionMono = llmWebClientService.getChatCompletion(llmChatRequestDto);
+
+            return chatCompletionMono.map(UserChatResponseDto::new);
+        });
+    }
+
+    @Override
+    public Flux<UserChatResponseDto> getOneShotChatStream(final UserChatRequestDto userChatRequestDto) {
+        return Flux.defer(() -> {
+            final LlmChatRequestDto llmChatRequestDto = new LlmChatRequestDto(userChatRequestDto, "Plan: 요청에 적절히 응답하기");
+            final LlmWebClientService llmWebClientService = llmWebClientServiceMap.get(userChatRequestDto.getLlmModel().getLlmType());
+            final Flux<LlmChatResponseDto> chatCompletionMono = llmWebClientService.getChatCompletionStream(llmChatRequestDto);
 
             return chatCompletionMono.map(UserChatResponseDto::new);
         });

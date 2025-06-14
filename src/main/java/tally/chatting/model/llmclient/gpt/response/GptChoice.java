@@ -13,6 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GptChoice {
-    private String finishReason;
+    private String finish_reason;
     private GptResponseMessageDto message;
+    private GptResponseMessageDto delta;
 }

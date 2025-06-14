@@ -24,6 +24,11 @@ public class LlmChatResponseDto {
 
     public LlmChatResponseDto(final GeminiChatResponseDto geminiChatResponseDto) {
         this.llmResponse = geminiChatResponseDto.getFirstText();
+    }
 
+    public static LlmChatResponseDto getLlmChatResponseDtoFromStream(final GptChatResponseDto gptChatResponseDto) {
+        final GptChoice choice = gptChatResponseDto.getFirstChoice();
+        final GptResponseMessageDto message = choice.getDelta();
+        return new LlmChatResponseDto(message.getContent());
     }
 }
