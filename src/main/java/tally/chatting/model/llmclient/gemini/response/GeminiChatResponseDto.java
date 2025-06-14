@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tally.chatting.exception.CustomErrorType;
+import tally.chatting.exception.ErrorTypeException;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class GeminiChatResponseDto {
                             .findFirst()
                             .map(GeminiPart::getText);
                 })
-                .orElseThrow();
+                .orElseThrow(() -> new ErrorTypeException("No text found in Gemini response candidates", CustomErrorType.GEMINI_RESPONSE_ERROR));
     }
 
 }

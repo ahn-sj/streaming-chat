@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tally.chatting.exception.CustomErrorType;
+import tally.chatting.exception.ErrorTypeException;
 import tally.chatting.model.llmclient.LlmChatRequestDto;
 import tally.chatting.model.llmclient.LlmChatResponseDto;
 import tally.chatting.model.llmclient.LlmType;
@@ -35,7 +37,7 @@ public class GeminiWebClientService implements LlmWebClientService {
                         clientResponse -> {
                             return clientResponse.bodyToMono(String.class).flatMap(body -> {
                                 log.error("Error Response from GPT API: {}", body);
-                                return Mono.error(new RuntimeException("API request failed" + body));
+                                return Mono.error(new ErrorTypeException("API request failed" + body, CustomErrorType.GEMINI_RESPONSE_ERROR));
                             });
                         }
                 )
@@ -56,7 +58,7 @@ public class GeminiWebClientService implements LlmWebClientService {
                         clientResponse -> {
                             return clientResponse.bodyToMono(String.class).flatMap(body -> {
                                 log.error("Error Response from GPT API: {}", body);
-                                return Mono.error(new RuntimeException("API request failed" + body));
+                                return Mono.error(new ErrorTypeException("API request failed" + body, CustomErrorType.GEMINI_RESPONSE_ERROR));
                             });
                         }
                 )

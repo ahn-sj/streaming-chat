@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tally.chatting.exception.CustomErrorType;
+import tally.chatting.exception.ErrorTypeException;
 
 import java.util.List;
 
@@ -22,6 +24,8 @@ public class GptChatResponseDto {
     private List<GptChoice> choices;
 
     public GptChoice getFirstChoice() {
-        return choices.stream().findFirst().orElseThrow();
+        return choices.stream()
+                .findFirst()
+                .orElseThrow(() -> new ErrorTypeException("GPT response does not contain any choices.", CustomErrorType.GPT_RESPONSE_ERROR));
     }
 }
