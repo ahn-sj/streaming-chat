@@ -9,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tally.chatting.model.user.chat.UserChatRequestDto;
 import tally.chatting.model.user.chat.UserChatResponseDto;
+import tally.chatting.service.user.chat.ChainOfThoughtService;
 import tally.chatting.service.user.chat.UserChatService;
 
 @RestController
@@ -17,6 +18,7 @@ import tally.chatting.service.user.chat.UserChatService;
 public class UserChatController {
 
     private final UserChatService userChatService;
+    private final ChainOfThoughtService chainOfThoughtService;
 
     @PostMapping("/oneshot")
     public Mono<UserChatResponseDto> oneShotChat(
@@ -30,5 +32,12 @@ public class UserChatController {
             @RequestBody UserChatRequestDto userChatRequestDto
     ) {
         return userChatService.getOneShotChatStream(userChatRequestDto);
+    }
+
+    @PostMapping("/cot")
+    public Flux<UserChatResponseDto> chainOfThought(
+            @RequestBody UserChatRequestDto userChatRequestDto
+    ) {
+        return chainOfThoughtService.getChainOfThoughtResponse(userChatRequestDto);
     }
 }

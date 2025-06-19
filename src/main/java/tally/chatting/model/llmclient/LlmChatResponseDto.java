@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tally.chatting.exception.CommonError;
 import tally.chatting.model.llmclient.gemini.response.GeminiChatResponseDto;
 import tally.chatting.model.llmclient.gpt.response.GptChatResponseDto;
 import tally.chatting.model.llmclient.gpt.response.GptChoice;
@@ -15,6 +16,21 @@ import tally.chatting.model.llmclient.gpt.response.GptResponseMessageDto;
 @Setter
 public class LlmChatResponseDto {
     private String llmResponse;
+    private String title;
+    private CommonError error;
+
+    public LlmChatResponseDto(final String llmResponse) {
+        this.llmResponse = llmResponse;
+    }
+
+    public LlmChatResponseDto(final CommonError error) {
+        this.error = error;
+    }
+
+    public LlmChatResponseDto(final String title, final String llmResponse) {
+        this.title = title;
+        this.llmResponse = llmResponse;
+    }
 
     public LlmChatResponseDto(final GptChatResponseDto gptChatResponseDto) {
         final GptChoice choice = gptChatResponseDto.getFirstChoice();
