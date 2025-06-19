@@ -12,13 +12,19 @@ import tally.chatting.model.llmclient.LlmChatResponseDto;
 @Getter
 @Setter
 public class UserChatResponseDto {
-    private String response;
     private String title;
+    private String response;
     private CommonError error;
 
     public UserChatResponseDto(final LlmChatResponseDto chatResponseDto) {
-        this.response = chatResponseDto.getLlmResponse();
         this.title = chatResponseDto.getTitle();
+        this.response = chatResponseDto.getLlmResponse();
         this.error = chatResponseDto.getError();
+    }
+
+    public UserChatResponseDto(final String title, final String response) {
+        this.title = title;
+        this.response = response;
+        this.error = null; // 기본적으로 에러는 null로 설정
     }
 }
